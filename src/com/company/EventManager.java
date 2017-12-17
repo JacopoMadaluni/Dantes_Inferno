@@ -47,8 +47,9 @@ public class EventManager
                 game.luciferKillsYouEvent();
             }else if (creature.getName().equals("virgil")){
                 game.print("The " + item.getName() + " passes through virgil, producing no effect.\n");
+            }else {
+                killEvent(creature);
             }
-            killEvent(creature);
         }else if (item.getName().equals("bucket") && creature.getName().equals("butcher") && getStatus(creature) == 6){
             Item bucketItem = game.getItem("bucket");
             Bucket bucket = (Bucket) bucketItem;
