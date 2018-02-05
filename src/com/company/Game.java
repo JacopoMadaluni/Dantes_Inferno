@@ -255,10 +255,6 @@ public class Game
         }else{
             if (nextRoom.isLocked()){
                 print(nextRoom.getLockedMessage());
-            }else if(nextRoom.getName().equals("vortex")){              /** vortex = random room */
-                currentRoom.removeCreature(virgil);
-                goRandomRoom();
-                moveVirgil(currentRoom, currentRoom);
             }else{
                 moveVirgil(currentRoom, nextRoom);
                 previousRoom = currentRoom;
@@ -759,28 +755,12 @@ public class Game
     }
 
     /**
-     * Teleports to the random room (user friendly).
-     * The implementation of getRandomRoom() follows
-     */
-    private void goRandomRoom(){
-        currentRoom = getRandomRoom();
-        previousRoom = currentRoom;
-        print("You jump into the vortex and faint.\n");
-        wait(1000);
-        print("...\n");
-        wait(1000);
-        print("...\n");
-        wait(1000);
-        print("You woke up in the " + currentRoom.getName() + ".\n\n");
-    }
-
-    /**
      * @return A random room from the collection of random rooms
      */
     private Room getRandomRoom(){
         int size = infernalRooms.size();
         int randomRoomIndex = new Random().nextInt(size);
-        int index = 0;
+      int index = 0;
         for (Room room : infernalRooms){
             if (randomRoomIndex == index){
                 return room;
@@ -845,6 +825,11 @@ public class Game
 
         Creature lion = new Creature("lion", "You see a lion.\n");
         addCreature(creatures, lion);
+
+        Creature ciacco = new Creature("ciacco", "Vedi un uomo che si rotola nel fango.\n");
+        addCreature(creatures, ciacco);
+        ciacco.addDialogue(2, "");
+
 
         Creature guardian = new Creature("guardian", "A guardian is standing in front of the door.\n");
         addCreature(creatures, guardian);
@@ -1028,7 +1013,7 @@ public class Game
         swamp.addExitPresentation("Back on your steps there is the limbo.\n");
         swamp.addExitPresentation("You see an infernal vortex, it seems that you can go into it.\n");
 
-        Room vortex = new Room("vortex", "");  // random room
+        TransporterRoom vortex = new TransporterRoom("vortex", "");  // random room
 
         Room river = new Room("river", "You go further down the cliff and arrive at the river, its cold there.\n");
         addRoom(rooms, river);
@@ -1040,6 +1025,7 @@ public class Game
 
         Room ending = new Room("ending", "");
         addRoom(rooms, ending);
+
 
         /** Putting everything into the rooms */
 
@@ -1124,6 +1110,11 @@ public class Game
         swamp.setExit("vortex",vortex);
 
         river.setExit("limbo", limbo);
+
+        vortex.addPossibleRoom(river);
+        vortex.addPossibleRoom(swamp);
+        vortex.addPossibleRoom(nastyNarrow);
+        vortex.addPossibleRoom(infernalForest);
 
         /** Set the starting room */
         currentRoom = darkWood;

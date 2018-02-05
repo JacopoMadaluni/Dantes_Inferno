@@ -202,4 +202,22 @@ public class StatusManager
                 break;
         }
     }
+    private void processCiaccoStatus(Creature ciacco){
+        int status = getStatus(ciacco);
+        switch (status){
+            case 1:
+                ciacco.advanceStatus();
+                break;
+            case 2:
+                ciacco.advanceStatus();
+                break;
+            case 3:
+                ciacco.advanceStatus();
+                break;
+            default:
+                break;
+        }
+
+    }
+
 }
