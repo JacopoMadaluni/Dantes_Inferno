@@ -1,4 +1,8 @@
 package com.company;
+import com.company.commands.Command;
+import com.company.commands.GoCommand;
+import com.company.commands.QuitCommand;
+
 import java.util.Scanner;
 
 /**
@@ -20,14 +24,16 @@ public class Parser
 {
     private CommandWords commands;  // holds all valid command words
     private Scanner reader;         // source of command input
+    private Game game;
 
     /**
      * Create a parser to read from the terminal window.
      */
-    public Parser()
+    public Parser(Game game)
     {
         commands = new CommandWords();
         reader = new Scanner(System.in);
+        this.game = game;
     }
 
     /**
@@ -67,11 +73,43 @@ public class Parser
             word1 = "";   // if the player enters a null command nothing happens.
         }
         if(commands.isCommand(word1)) {
+            Command testing = getCorrectCommand(word1,word2,word3, word4);
+            if (testing != null){
+                return testing;
+            }
             return new Command(word1, word2, word3, word4);
         }
         else {
             return new Command(null, word2, word3, word4);
         }
     }
+
+    private Command getCorrectCommand(String keyWord, String word2, String word3, String word4 ){
+        switch(keyWord){
+            case "help":
+            case "see":
+            case "look":
+            case "go":
+                return new GoCommand(keyWord, word2, word3, word4, game);
+            case "back":
+            case "take":
+            case "examine":
+            case "inventory":
+            case "inv":
+            case "drop":
+            case "talk":
+            case "use":
+            case "give":
+            case "quit":
+                return new QuitCommand(keyWord, word2, word3, word4, game);
+            case "textSpeed":
+            case "exit":
+            case "exits":
+            default:
+                return null;
+        }
+    }
+
+
 }
 

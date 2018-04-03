@@ -1,4 +1,6 @@
 package com.company;
+import com.company.commands.Command;
+
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Iterator;
@@ -52,7 +54,7 @@ public class Game
         items = new HashSet<>();
         rooms = new HashSet<>();
         infernalRooms = new HashSet<>();
-        parser = new Parser();
+        parser = new Parser(this);
         player = new Player();
         commandManager = new CommandManager(this);
         eventManager = new EventManager(this);
@@ -171,7 +173,8 @@ public class Game
         printStart();
         while (! this.finished) {
             Command command = parser.getCommand();
-            this.finished = processCommand(command);
+            this.finished = command.execute();
+            //this.finished = processCommand(command);
             moveCreatures();
             if (finished){
                 break;

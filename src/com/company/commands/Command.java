@@ -1,4 +1,7 @@
-package com.company;
+package com.company.commands;
+
+import com.company.Game;
+
 /**
  * This class is part of the Divina Commedia simulator application.
  *
@@ -19,10 +22,11 @@ package com.company;
 
 public class Command
 {
-    private String commandWord;
-    private String secondWord;
-    private String thirdWord;
-    private String fourthWord;
+    protected String commandWord;
+    protected String secondWord;
+    protected String thirdWord;
+    protected String fourthWord;
+    protected Game game;
 
     /**
      * Create a command object. First and second word must be supplied, but
@@ -33,12 +37,19 @@ public class Command
      * @param thirdWord The third word of the command.
      * @param fourthWord The fourth word of the command.
      */
+    public Command(String firstWord, String secondWord, String thirdWord, String fourthWord, Game game){
+        commandWord = firstWord;
+        this.secondWord = secondWord;
+        this.thirdWord = thirdWord;
+        this.fourthWord = fourthWord;
+        this.game = game;
+    }
+
     public Command(String firstWord, String secondWord, String thirdWord, String fourthWord){
         commandWord = firstWord;
         this.secondWord = secondWord;
         this.thirdWord = thirdWord;
         this.fourthWord = fourthWord;
-
     }
 
     /**
@@ -85,6 +96,10 @@ public class Command
     public boolean isUnknown()
     {
         return (commandWord == null);
+    }
+
+    public boolean execute(){
+        return false;
     }
 }
 
