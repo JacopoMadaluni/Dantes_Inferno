@@ -10,12 +10,17 @@ public class GoCommand extends Command {
 
     @Override
     public boolean execute(){
-        if (secondWord.equals("back")){
-            game.goBack();
-        }else {
-            game.goRoom(secondWord);
+        try {
+            if (secondWord.equals("back")) {
+                game.goBack();
+            } else {
+                game.goRoom(secondWord);
+            }
+        }catch(NullPointerException ex){
+            game.print("Go where?");
+        }finally {
+            return false;
         }
-        return false;
     }
 
 }

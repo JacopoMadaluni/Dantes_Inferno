@@ -14,7 +14,7 @@ public class CommandWords
 {
     // a constant array that holds all valid command words
     private static final String[] validCommands = {
-            "go", "", "quit", "help", "take", "drop", "look", "examine",  "inventory", "inv", "textSpeed", "see", "use", "give", "talk", "back", "exits",
+            "go", "", "save", "quit", "help", "take", "drop", "look", "examine",  "inventory", "inv", "textSpeed", "see", "use", "give", "talk", "back", "exits",
             "exit"
     };
 
@@ -30,8 +30,11 @@ public class CommandWords
      * Check whether a given String is a valid command word.
      * @return true if it is, false if it isn't.
      */
-    public boolean isCommand(String aString)
+    public static boolean mustBeSaved(String aString)
     {
+        if (aString.equals("save")){
+            return false;
+        }
         for(int i = 0; i < validCommands.length; i++) {
             if(validCommands[i].equals(aString))
                 return true;

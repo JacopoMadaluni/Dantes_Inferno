@@ -45,12 +45,38 @@ public class Command
         this.game = game;
     }
 
+    public Command(String firstWord, String secondWord, String thirdWord, Game game){
+        commandWord = firstWord;
+        this.secondWord = secondWord;
+        this.thirdWord = thirdWord;
+        this.game = game;
+    }
+
+    public Command(String firstWord, String secondWord, Game game){
+        commandWord = firstWord;
+        this.secondWord = secondWord;
+        this.game = game;
+    }
+
+    public Command(Game game){
+        this.game = game;
+    }
+
+    /**
+     * TODO OOOLD
+     * @param firstWord
+     * @param secondWord
+     * @param thirdWord
+     * @param fourthWord
+     */
     public Command(String firstWord, String secondWord, String thirdWord, String fourthWord){
         commandWord = firstWord;
         this.secondWord = secondWord;
         this.thirdWord = thirdWord;
         this.fourthWord = fourthWord;
     }
+
+
 
     /**
      * Return the command word (the first word) of this command. If the
@@ -100,6 +126,11 @@ public class Command
 
     public boolean execute(){
         return false;
+    }
+
+    @Override
+    public String toString(){
+        return commandWord + " " + secondWord;
     }
 }
 

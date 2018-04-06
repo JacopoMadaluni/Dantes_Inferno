@@ -1,7 +1,12 @@
 package com.company;
 import com.company.commands.Command;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Iterator;
 import java.lang.Math;
@@ -25,6 +30,7 @@ public class Game
 {
     private Helper helper;
     private Parser parser;
+    private Saver saver;
     private Room currentRoom;
     private Room previousRoom;
     private Player player;
@@ -37,6 +43,7 @@ public class Game
     private EventManager eventManager;
     private Virgilius virgil;
     private boolean finished;
+    private static boolean printActivated;
     private static int textSpeed;
     private Bucket bucket;
 
@@ -48,7 +55,9 @@ public class Game
     {
         this.finished = false;
         this.textSpeed = 25;
+        this.printActivated = true;
         helper = new Helper();
+        saver = new Saver();
         creatures = new HashSet<>();
         movingCreatures = new HashSet<>();
         items = new HashSet<>();
@@ -60,6 +69,10 @@ public class Game
         eventManager = new EventManager(this);
         initializeGame();
         previousRoom = currentRoom;
+    }
+
+    public void setPrintActivated(boolean newValue){
+        printActivated = newValue;
     }
 
     /**
@@ -165,12 +178,26 @@ public class Game
 
     /** Core methods */
 
+    public void load(String savePoint){
+        printActivated = false;
+        System.out.println("Loading");
+        List<Command> toLoad = parser.loadSave(savePoint);
+        for (Command c : toLoad){
+            c.execute();
+        }
+        System.out.println("Load successful");
+        printActivated = true;
+
+    }
     /**
      *  Main play routine. Loops until end of play.
      */
-    public void play()
+    public void play(boolean beginning)
     {
-        printStart();
+        if (beginning) {
+            saver.clearSavings();
+            printStart();
+        }
         while (! this.finished) {
             Command command = parser.getCommand();
             this.finished = command.execute();
@@ -204,6 +231,12 @@ public class Game
         wantToQuit = commandManager.process(commandWord, secondWord, thirdWord, fourthWord);
 
         return wantToQuit;
+    }
+
+    public void save(){
+        String history = parser.getCommandsHistory();
+        parser.clearHistory();
+        saver.save(history);
     }
 
     /** implementations of user commands */
@@ -1139,6 +1172,9 @@ public class Game
      * @param s The string to be printed dynamically.
      */
     public static void print(String s){
+        if (!printActivated){
+            return;
+        }
         if (textSpeed != 0 ){
             char[] charArray = s.toCharArray();
             for (char c : charArray){
