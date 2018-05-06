@@ -12,4 +12,9 @@ public class InventoryCommand extends Command {
         game.printInventory();
         return false;
     }
+
+    @Override
+    public boolean mustBeSaved(){
+        return false;
+    }
 }

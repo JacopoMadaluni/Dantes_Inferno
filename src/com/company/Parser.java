@@ -33,14 +33,51 @@ public class Parser
      */
     public Parser(Game game)
     {
-        commands = new CommandWords();
+        commands = new CommandWords(game);
         reader = new Scanner(System.in);
         this.game = game;
         commandsHistory = "";
     }
 
+    public Command parseCommand(String string){
+        String inputLine;   // will hold the full input line
+        String word1 = null;
+        String word2 = null;
+        String word3 = null;
+        String word4 = null;
+        Scanner tokenizer = new Scanner(string);
+        if(tokenizer.hasNext()) {
+            word1 = tokenizer.next().toLowerCase();   // get first word
+            if(tokenizer.hasNext()) {
+                word2 = tokenizer.next().toLowerCase();// get second word
+                if (tokenizer.hasNext()){
+                    word3 = tokenizer.next().toLowerCase();    // get third word
+                    if (tokenizer.hasNext()){
+                        word4 = tokenizer.next().toLowerCase();   //get fourth word
+                        // note: it ignores all the words after the fourth word
+                    }
+                }
+            }
+        }
+        if (word1 == null){
+            word1 = "";   // if the player enters a null command nothing happens.
+        }
+        Command command  = getCorrectCommand(word1, word2, word3, word4);
+        if (command.mustBeSaved()){
+            commandsHistory = commandsHistory + string + ",";
+        }
+        return command;
+
+    }
+
+
+
+
     public List<Command> loadSave(String commands){
         List<Command> toLoad = new ArrayList<>();
+        if (commands == null){
+            return toLoad;
+        }
         Scanner loader = new Scanner(commands);
         loader.useDelimiter(",");
         while (loader.hasNext()){
@@ -109,10 +146,11 @@ public class Parser
         if (word1 == null){
             word1 = "";   // if the player enters a null command nothing happens.
         }
-        if (CommandWords.mustBeSaved(word1)){
+        Command command = getCorrectCommand(word1, word2, word3, word4);
+        if (command.mustBeSaved()){
             commandsHistory = commandsHistory + inputLine + ",";
         }
-        return getCorrectCommand(word1, word2, word3, word4);
+        return command;
         /*if(commands.isCommand(word1)) {
             Command testing = getCorrectCommand(word1,word2,word3, word4);
             if (testing != null){
@@ -156,6 +194,7 @@ public class Parser
             case "drop":
                 return new Drop(keyWord, word2, word3, word4, game);
             case "talk":
+                return new TalkCommand(keyWord, word2, word3, word4, game);
             case "use":
             case "give":
             case "save":

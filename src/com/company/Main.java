@@ -1,10 +1,6 @@
 package com.company;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 
 public class Main {
@@ -33,30 +29,15 @@ public class Main {
 
     }
 
-    public static boolean loadSave(){
-		while(scanner.hasNext()){
+    public static boolean loadSave() {
+		while (scanner.hasNext()) {
 			String input = scanner.next();
-			if (input.toLowerCase().equals("y")){
+			if (input.toLowerCase().equals("y")) {
 				return true;
-			}else if (input.toLowerCase().equals("n")){
+			} else if (input.toLowerCase().equals("n")) {
 				return false;
 			}
 		}
 		return false;
-	}
-
-	public void testRes(){
-    	try {
-			File file = new File("savings.txt");
-			System.out.println(file.getPath());
-			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-			writer.write("test787979");
-			writer.close();
-
-			//Files.write(Paths.get("savings.txt"), "test1".getBytes(), StandardOpenOption.WRITE);
-			//System.out.println("file written");
-		}catch(Exception e){
-			System.out.println(e);
-		}
 	}
 }

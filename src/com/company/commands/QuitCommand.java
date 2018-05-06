@@ -11,4 +11,9 @@ public class QuitCommand extends Command{
     public boolean execute(){
         return true;
     }
+
+    @Override
+    public boolean mustBeSaved(){
+        return false;
+    }
 }

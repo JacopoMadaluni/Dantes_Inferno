@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Iterator;
 import java.lang.Math;
+import com.company.Gui.*;
 /**
  *  This class is the main class of the Divina Commedia simulator application.
  *  The game is inspired to a famus Italian poem by Dante Alighieri: Divinia Commedia.
@@ -28,6 +29,7 @@ import java.lang.Math;
 
 public class Game
 {
+    private Controller controller;
     private Helper helper;
     private Parser parser;
     private Saver saver;
@@ -56,7 +58,7 @@ public class Game
         this.finished = false;
         this.textSpeed = 25;
         this.printActivated = true;
-        helper = new Helper();
+        helper = new Helper(this);
         saver = new Saver();
         creatures = new HashSet<>();
         movingCreatures = new HashSet<>();
@@ -69,6 +71,10 @@ public class Game
         eventManager = new EventManager(this);
         initializeGame();
         previousRoom = currentRoom;
+    }
+
+    public void setController(Controller controller){
+        this.controller = controller;
     }
 
     public void setPrintActivated(boolean newValue){
@@ -189,6 +195,11 @@ public class Game
         printActivated = true;
 
     }
+
+    public void parseCommand(String inputLine){
+        Command command = parser.parseCommand(inputLine);
+        this.finished = command.execute();
+    }
     /**
      *  Main play routine. Loops until end of play.
      */
@@ -235,8 +246,14 @@ public class Game
 
     public void save(){
         String history = parser.getCommandsHistory();
-        parser.clearHistory();
-        saver.save(history);
+        if (saver.save(history)){
+            print("--- Game Saved ---");
+            parser.clearHistory();
+        }else{
+            print("Error, could not save the game, try again.");
+
+        }
+
     }
 
     /** implementations of user commands */
@@ -729,7 +746,7 @@ public class Game
     /**
      * Gets printed at the very start of the game.
      */
-    private void printStart(){
+    public void printStart(){
         print("\nIn the middle of the journey of your life\n" +
                 "You came to yourself in a dark wood\nWhere the direct way was lost..\n\n");
         print("Welcome to this adventure game developed by Jacopo Madaluni, the setting is inspired by\n" +
@@ -1167,11 +1184,15 @@ public class Game
         }
     }
 
+    public void print(String s){
+        print2(s);
+    }
+
     /**
      * Prints the string character by character with a delay of 25 ms.
      * @param s The string to be printed dynamically.
      */
-    public static void print(String s){
+    public void print1(String s){
         if (!printActivated){
             return;
         }
@@ -1190,5 +1211,10 @@ public class Game
             System.out.print(s);
         }
     }
+
+    public void print2(String s){
+        controller.dinamicPrint(s);
+    }
+
 }
 

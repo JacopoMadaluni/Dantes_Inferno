@@ -10,8 +10,12 @@ public class Help extends Command {
 
     @Override
     public boolean execute(){
-        Helper helper = new Helper();
+        Helper helper = new Helper(game);
         helper.help(secondWord);
+        return false;
+    }
+    @Override
+    public boolean mustBeSaved(){
         return false;
     }
 }

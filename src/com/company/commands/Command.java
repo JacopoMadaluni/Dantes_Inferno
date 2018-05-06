@@ -20,7 +20,7 @@ import com.company.Game;
  * @version 2016.02.29
  */
 
-public class Command
+public abstract class Command
 {
     protected String commandWord;
     protected String secondWord;
@@ -90,6 +90,8 @@ public class Command
         }
         return commandWord;
     }
+
+    public abstract boolean mustBeSaved();
 
     /**
      * @return The second word of this command. Returns null if there was no

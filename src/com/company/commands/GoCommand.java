@@ -23,4 +23,9 @@ public class GoCommand extends Command {
         }
     }
 
+    @Override
+    public boolean mustBeSaved(){
+        return true;
+    }
+
 }

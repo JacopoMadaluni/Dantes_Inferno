@@ -12,4 +12,9 @@ public class SaveCommand extends Command{
         game.save();
         return false;
     }
+
+    @Override
+    public boolean mustBeSaved(){
+        return false;
+    }
 }

@@ -16,16 +16,16 @@ public class Saver {
         }
     }
 
-    public void save(String history){
+    public static boolean save(String history){
         try {
             Files.write(Paths.get("savings.txt"), history.getBytes(), StandardOpenOption.APPEND);
-            System.out.println("---- Game Saved ----");
+            return true;
         }catch(IOException e){
-            System.out.println(e);
+            return false;
         }
     }
 
-    public void clearSavings(){
+    public static void clearSavings(){
         try {
             File file = new File("savings.txt");
             PrintWriter writer = new PrintWriter(file);
@@ -34,6 +34,16 @@ public class Saver {
         }catch(IOException e){
             System.out.println(e);
         }
+    }
 
+    public static String load(){
+        String toLoad = "";
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(new File("savings.txt")));
+            toLoad = reader.readLine();
+        }catch(IOException e){
+            System.out.println(e);
+        }
+        return toLoad;
     }
 }

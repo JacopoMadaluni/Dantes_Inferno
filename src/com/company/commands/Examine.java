@@ -17,4 +17,9 @@ public class Examine extends Command {
         }
         return false;
     }
+
+    @Override
+    public boolean mustBeSaved(){
+        return false;
+    }
 }

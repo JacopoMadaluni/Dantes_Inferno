@@ -13,4 +13,9 @@ public class See extends Command {
         game.see();
         return false;
     }
+
+    @Override
+    public boolean mustBeSaved(){
+        return false;
+    }
 }

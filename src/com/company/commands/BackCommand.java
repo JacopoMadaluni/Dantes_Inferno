@@ -12,4 +12,9 @@ public class BackCommand extends Command{
         game.goBack();
         return false;
     }
+
+    @Override
+    public boolean mustBeSaved(){
+        return true;
+    }
 }

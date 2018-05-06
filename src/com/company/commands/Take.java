@@ -16,4 +16,9 @@ public class Take extends Command{
         }
         return false;
     }
+
+    @Override
+    public boolean mustBeSaved(){
+        return true;
+    }
 }
