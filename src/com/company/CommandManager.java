@@ -19,7 +19,7 @@ public class CommandManager
      * @param game The game will input itself.
      */
     public CommandManager(Game game){
-        helper = new Helper(game);
+        helper = Helper.getHelper(game);
         wantToFinish = false;
         this.game = game;
     }

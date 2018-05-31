@@ -15,7 +15,7 @@ public class CommandWords
     private Game game;
     // a constant array that holds all valid command words
     private static final String[] validCommands = {
-            "go", "", "save", "quit", "help", "take", "drop", "look", "examine",  "inventory", "inv", "textSpeed", "see", "use", "give", "talk", "back", "exits",
+            "go", "", "save", "quit", "help", "take", "drop", "look", "examine",  "inventory", "inv", "textspeed", "see", "use", "give", "talk", "back", "exits",
             "exit"
     };
 

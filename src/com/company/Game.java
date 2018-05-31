@@ -58,7 +58,7 @@ public class Game
         this.finished = false;
         this.textSpeed = 25;
         this.printActivated = true;
-        helper = new Helper(this);
+        helper = Helper.getHelper(this);
         saver = new Saver();
         creatures = new HashSet<>();
         movingCreatures = new HashSet<>();
@@ -113,12 +113,6 @@ public class Game
         return player.hasVirgil();
     }
 
-    /**
-     * @return the bucket which is a special item.
-     */
-    //public Bucket getBucket(){
-    //    return bucket;
-    //  }
 
     /**
      * Given the name of the creature returns the creature.
@@ -1185,8 +1179,8 @@ public class Game
     }
 
     public void print(String s){
-        print2(s);
-    }
+        print1(s);
+    } // change to switch mode between 1 and 2
 
     /**
      * Prints the string character by character with a delay of 25 ms.

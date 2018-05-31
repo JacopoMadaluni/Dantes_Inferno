@@ -8,8 +8,17 @@ package com.company;
  */
 public class Helper{
     Game game;
-    public Helper (Game game){
+    private static Helper singleton;
+    private Helper (Game game){
         this.game = game;
+    }
+
+    public static Helper getHelper(Game game){
+        if (singleton == null){
+            singleton = new Helper(game);
+        }
+        return singleton;
+
     }
 
     /**

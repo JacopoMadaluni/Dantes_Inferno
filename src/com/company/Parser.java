@@ -173,6 +173,8 @@ public class Parser
 
     private Command getCorrectCommand(String keyWord, String word2, String word3, String word4 ){
         switch(keyWord){
+            case "":
+                return new VoidCommand(game);
             case "help":
                 return new Help(keyWord, word2, word3, word4, game);
             case "see":
@@ -196,14 +198,19 @@ public class Parser
             case "talk":
                 return new TalkCommand(keyWord, word2, word3, word4, game);
             case "use":
+                return new UseCommand(keyWord, word2, word3, word4, game);
             case "give":
+                return new GiveCommand(keyWord, word2, word3, word4, game);
             case "save":
                 return new SaveCommand(game);
             case "quit":
                 return new QuitCommand(keyWord, word2, word3, word4, game);
-            case "textSpeed":
+            case "textspeed":
+                return new TextSpeedCommand(keyWord, word2, game);
             case "exit":
+                return new GetExitsCommand(game);
             case "exits":
+                return new GetExitsCommand(game);
             default:
                 return new UnknownCommand(keyWord, word2, word3, word4, game);
         }
