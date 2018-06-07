@@ -1,6 +1,7 @@
 package com.company;
 import com.company.commands.Command;
 
+import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,6 +12,11 @@ import java.util.Random;
 import java.util.Iterator;
 import java.lang.Math;
 import com.company.Gui.*;
+import javafx.concurrent.Worker;
+import javafx.scene.control.TextArea;
+
+import javax.swing.plaf.nimbus.State;
+
 /**
  *  This class is the main class of the Divina Commedia simulator application.
  *  The game is inspired to a famus Italian poem by Dante Alighieri: Divinia Commedia.
@@ -91,6 +97,7 @@ public class Game
             int speed = Integer.parseInt(newSpeed);
             if (speed >= 0 && speed < 100){
                 textSpeed = speed;
+                controller.updateTextSpeed();
                 System.out.println("Text speed updated");
             }else{
                 System.out.println("The speed must be between 0 and 100");
@@ -135,6 +142,8 @@ public class Game
     public Room getCurrentRoom(){
         return currentRoom;
     }
+
+    public int getTextSpeed(){ return textSpeed;}
 
     /**
      * Given the name of the room, returns the room.
@@ -742,16 +751,15 @@ public class Game
      */
     public void printStart(){
         print("\nIn the middle of the journey of your life\n" +
-                "You came to yourself in a dark wood\nWhere the direct way was lost..\n\n");
-        print("Welcome to this adventure game developed by Jacopo Madaluni, the setting is inspired by\n" +
-                "a poem called: Divina Commedia. Your character name is 'Dante'.\n");
-        print("He woke up in this strange place, you have to help him escape.\n");
-        print("I suggest you to start looking around.\n");
+                "You came to yourself in a dark wood\nWhere the direct way was lost..\n\n" +
+                "Welcome to this adventure game developed by Jacopo Madaluni, the setting is inspired by\n" +
+                "a poem called: Divina Commedia. Your character name is 'Dante'.\n" +
+                "He woke up in this strange place, you have to help him escape.\n" +
+                "I suggest you to start looking around.\n" +
+                "Type textSpeed <value> to set the speed of the dynamic printing.\n" +
+                "If you are marking the assignment I would suggest to set 'textSpeed 0' to save time.\n" +
+                "Type 'help' for instructions.\n");
 
-        print("Type textSpeed <value> to set the speed of the dynamic printing.\n");
-        print("If you are marking the assignment I would suggest to set 'textSpeed 0' to save time.\n");
-
-        print("Type 'help' for instructions.\n");
     }
 
     private void printWin(){
@@ -1179,7 +1187,7 @@ public class Game
     }
 
     public void print(String s){
-        print1(s);
+        print2(s);
     } // change to switch mode between 1 and 2
 
     /**
@@ -1206,9 +1214,14 @@ public class Game
         }
     }
 
-    public void print2(String s){
-        controller.dinamicPrint(s);
+    public void  print2(String s){
+        if (textSpeed == 0){
+            controller.appendText(s + "\n");
+        }else {
+            controller.dinamicPrint(s + "\n");
+        }
     }
-
 }
+
+
 

@@ -3,8 +3,13 @@ package com.company.Gui;
 import com.company.Game;
 import com.company.Saver;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -19,14 +24,22 @@ public class Controller {
     private MainFrame main;
     private Game game;
 
+
+    public Controller(){
+    }
     public void setGame(Game game){
         this.game = game;
+
     }
+
 
     public void setMain(MainFrame main){
         this.main = main;
     }
 
+    public TextArea getTerminal(){
+        return terminal;
+    }
 
     public void saveGame(){
         game.parseCommand("save");
@@ -37,24 +50,38 @@ public class Controller {
     }
 
     public void dinamicPrint(String text){
-        char[] characters = text.toCharArray();
-        for (char c : characters){
-            appendChar(c);
-        }
-        terminal.setText(terminal.getText() + "\n");
-        terminal.selectPositionCaret(terminal.getLength());
-        terminal.deselect();
+        Task task = new Task<Void>() {
+            @Override public Void call() {
+                char[] characters = text.toCharArray();
+                final int max = characters.length;
+                int i = 0;
+                for (char c : characters) {
+                    Platform.runLater(() -> terminal.appendText("" +c));
+                    updateProgress(i, max);
+                    i++;
+                    try{
+                        Thread.sleep(game.getTextSpeed());
+                    }catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
+        };
+
+        ProgressBar bar = new ProgressBar();
+        bar.progressProperty().bind(task.progressProperty());
+        new Thread(task).start();
     }
 
-    public void appendChar(char c){
-        terminal.setText(terminal.getText() + c);
-    }
+
 
     public void appendText(String text){
         terminal.setText(terminal.getText() + "\n" + text);
         terminal.selectPositionCaret(terminal.getLength());
         terminal.deselect();
     }
+
 
     @FXML
     public void onEnter(javafx.event.ActionEvent e)

@@ -25,10 +25,12 @@ public class MainFrame extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException{
         this.stage = primaryStage;
+        primaryStage.setTitle("Dante's Inferno");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("MainFrame.fxml"));
         root = loader.load();
 
         initializeStyle();
+        primaryStage.resizableProperty().setValue(false);
         primaryStage.setScene(new Scene(root, 600,400));
         primaryStage.show();
 
@@ -75,5 +77,6 @@ public class MainFrame extends Application {
         root =  loader.load();
         stage.setScene(new Scene(root));
     }
+
 
 }
