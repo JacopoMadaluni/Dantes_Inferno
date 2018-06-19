@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.Iterator;
 import java.lang.Math;
 import com.company.Gui.*;
+import com.sun.xml.internal.bind.v2.TODO;
 import javafx.concurrent.Worker;
 import javafx.scene.control.TextArea;
 
@@ -47,7 +48,6 @@ public class Game
     private HashSet<Item> items;
     private HashSet<Room> rooms;
     private HashSet<Room> infernalRooms;
-    private CommandManager commandManager;
     private EventManager eventManager;
     private Virgilius virgil;
     private boolean finished;
@@ -73,7 +73,6 @@ public class Game
         infernalRooms = new HashSet<>();
         parser = new Parser(this);
         player = new Player();
-        commandManager = new CommandManager(this);
         eventManager = new EventManager(this);
         initializeGame();
         previousRoom = currentRoom;
@@ -83,9 +82,6 @@ public class Game
         this.controller = controller;
     }
 
-    public void setPrintActivated(boolean newValue){
-        printActivated = newValue;
-    }
 
     /**
      * Set the delay of the dynamic printing.
@@ -97,7 +93,6 @@ public class Game
             int speed = Integer.parseInt(newSpeed);
             if (speed >= 0 && speed < 100){
                 textSpeed = speed;
-                controller.updateTextSpeed();
                 System.out.println("Text speed updated");
             }else{
                 System.out.println("The speed must be between 0 and 100");
@@ -105,6 +100,9 @@ public class Game
         }else{
             System.out.println("Invalid speed");
         }
+    }
+    public void setTextSpeed(int i){
+        textSpeed = i;
     }
 
     private boolean isNumeric(String string){
@@ -224,29 +222,6 @@ public class Game
         print("Thank you for playing.  Good bye.");
     }
 
-    /**
-     * Given a command, if the command is known, calls the CommandManager to process it.
-     * Return true if the player quits or the end of the game is reached.
-     */
-    private boolean processCommand(Command command)
-    {
-        boolean wantToQuit = false;
-
-        if(command.isUnknown() && command.getCommandWord() != null) {
-            print("I don't know what you mean...\n");
-            return false;
-        }
-
-        String commandWord = command.getCommandWord();
-        String secondWord = command.getSecondWord();
-        String thirdWord = command.getThirdWord();
-        String fourthWord = command.getFourthWord();
-
-        wantToQuit = commandManager.process(commandWord, secondWord, thirdWord, fourthWord);
-
-        return wantToQuit;
-    }
-
     public void save(){
         String history = parser.getCommandsHistory();
         if (saver.save(history)){
@@ -260,7 +235,6 @@ public class Game
     }
 
     /** implementations of user commands */
-    /** All the user commands are called by the CommandManager when it's the case */
 
     /**
      * Prints the description of everithing around the player.
@@ -433,8 +407,8 @@ public class Game
     public void talkTo(String creatureName){
         Creature creature = currentRoom.getCreature(creatureName);
         if (creature == null){
-            print("There is no " + creatureName + " here.\n");
-            print(helper.helpUser(currentRoom.getName(), creatureName));
+            print("There is no " + creatureName + " here.\n" +
+                    helper.helpUser(currentRoom.getName(), creatureName));
         }else if (creature.getName().equals("virgil")){
             print(virgil.getDialogue(currentRoom.getName()));
             virgil.increaseDialogueIndex();
@@ -674,8 +648,7 @@ public class Game
         print("Lucifer disarms you and kills you.\n");
         wait(2000);
         print("You lost.\n");
-        commandManager.setWantToFinish(true);
-        finished = commandManager.process("quit", "","","");
+        // TODO add lose screen or event
     }
 
     /**
@@ -687,8 +660,7 @@ public class Game
             currentRoom = getRoom("ending");
         }else{
             printLose();
-            commandManager.setWantToFinish(true);
-            finished = commandManager.process("quit", "","","");
+            // TODO Add lose event
         }
     }
 
@@ -1215,10 +1187,14 @@ public class Game
     }
 
     public void  print2(String s){
+        if (controller.isPrinting()){
+            return;
+        }
         if (textSpeed == 0){
             controller.appendText(s + "\n");
         }else {
-            controller.dinamicPrint(s + "\n");
+           // controller.dynamicPrint(s + "\n");
+            controller.test(s);
         }
     }
 }

@@ -3,11 +3,14 @@ package com.company.Gui;
 import com.company.Game;
 import com.company.Saver;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +28,7 @@ public class MainFrame extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException{
         this.stage = primaryStage;
+        stage.setOnCloseRequest(e -> quit());
         primaryStage.setTitle("Dante's Inferno");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("MainFrame.fxml"));
         root = loader.load();
@@ -54,6 +58,7 @@ public class MainFrame extends Application {
         Saver.clearSavings();
         controller.setGame(game);
         stage.setScene(new Scene(root));
+        root.requestFocus();
 
         game.printStart();
     }
@@ -70,6 +75,11 @@ public class MainFrame extends Application {
         controller.setGame(game);
 
         stage.setScene(new Scene(root));
+    }
+
+    public void quit(){
+        Platform.exit();
+        System.exit(0);
     }
 
     public void loadInitialScreen() throws IOException{

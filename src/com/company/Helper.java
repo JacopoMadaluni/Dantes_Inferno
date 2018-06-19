@@ -18,7 +18,6 @@ public class Helper{
             singleton = new Helper(game);
         }
         return singleton;
-
     }
 
     /**
@@ -30,8 +29,6 @@ public class Helper{
     public void help(String word2){
         if (word2 == null){
             game.print("If you don't know how to use a command, type help <command> ");
-            game.print("Since the game is in Alpha version, please use lower case to write, otherwise your commands");
-            game.print("might not be recognised.");
             game.print("Your command words are:");
             game.print(CommandWords.getUserCommands());
         }else{

@@ -85,9 +85,9 @@ public abstract class Command
      */
     public String getCommandWord()
     {
-        if (commandWord == null){
+       /* if (commandWord == null){
             return "";
-        }
+        }*/
         return commandWord;
     }
 
@@ -126,9 +126,7 @@ public abstract class Command
         return (commandWord == null);
     }
 
-    public boolean execute(){
-        return false;
-    }
+    public abstract boolean execute();
 
     @Override
     public String toString(){

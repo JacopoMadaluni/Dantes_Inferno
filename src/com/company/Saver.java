@@ -12,7 +12,7 @@ public class Saver {
         try{
             savings = new File("savings");
         }catch(Exception e){
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

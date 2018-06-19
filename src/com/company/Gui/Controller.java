@@ -23,13 +23,27 @@ public class Controller {
     @FXML TextField inputLine;
     private MainFrame main;
     private Game game;
+    private Printer printer;
+    private boolean printing;
 
 
     public Controller(){
+        printer = new Printer(this);
+    }
+
+    public int getTextSpeed(){
+        return game.getTextSpeed();
     }
     public void setGame(Game game){
         this.game = game;
+    }
 
+    public void setGameTextSpeed(int i){
+        game.setTextSpeed(i);
+    }
+
+    public boolean isPrinting(){
+        return printer.isPrinting();
     }
 
 
@@ -49,9 +63,13 @@ public class Controller {
         main.loadInitialScreen();
     }
 
-    public void dinamicPrint(String text){
+    public void test(String text){
+        printer.dynamicPrint(text);
+    }
+    public void dynamicPrint(String text){
         Task task = new Task<Void>() {
             @Override public Void call() {
+                printing = true;
                 char[] characters = text.toCharArray();
                 final int max = characters.length;
                 int i = 0;
@@ -65,6 +83,7 @@ public class Controller {
                         e.printStackTrace();
                     }
                 }
+                printing = false;
                 return null;
             }
         };

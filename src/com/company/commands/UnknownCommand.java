@@ -9,7 +9,7 @@ public class UnknownCommand extends Command {
 
     @Override
     public boolean execute(){
-        game.print("I don't know what you mean..");
+        game.print("I don't know what you mean..\n");
         return false;
     }
 
