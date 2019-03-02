@@ -7,7 +7,17 @@ package com.company;
  * the first place.
  */
 public class Helper{
-    public Helper (){
+    Game game;
+    private static Helper singleton;
+    private Helper (Game game){
+        this.game = game;
+    }
+
+    public static Helper getHelper(Game game){
+        if (singleton == null){
+            singleton = new Helper(game);
+        }
+        return singleton;
     }
 
     /**
@@ -18,48 +28,46 @@ public class Helper{
      */
     public void help(String word2){
         if (word2 == null){
-            System.out.println("If you don't know how to use a command, type help <command> ");
-            System.out.println("Since the game is in Alpha version, please use lower case to write, otherwise your commands");
-            System.out.println("might not be recognised.");
-            System.out.println("Your command words are:");
-            CommandWords.printUserCommands();
+            game.print("If you don't know how to use a command, type help <command> ");
+            game.print("Your command words are:");
+            game.print(CommandWords.getUserCommands());
         }else{
             switch (word2){
                 case "go":
-                    System.out.println("Type 'go <keyword>' to move, type 'exits' to see the keywords you can use.");
+                    game.print("Type 'go <keyword>' to move, type 'exits' to see the keywords you can use.");
                     break;
                 case "take":
-                    System.out.println("Type 'take <item>' to take the an item.");
-                    System.out.println("The item must be in the place you are currently in, in order to be taken.");
-                    System.out.println("If you already have stuff in your inventory, it may happen that");
-                    System.out.println("you will not be able to take the item, if the sum of your stuff is");
-                    System.out.println("greater than 10.");
+                    game.print("Type 'take <item>' to take the an item.");
+                    game.print("The item must be in the place you are currently in, in order to be taken.");
+                    game.print("If you already have stuff in your inventory, it may happen that");
+                    game.print("you will not be able to take the item, if the sum of your stuff is");
+                    game.print("greater than 10.");
                     break;
                 case "drop":
-                    System.out.println("Type 'drop <item' to drop the item on the ground.");
-                    System.out.println("you must have the item in your inventory in order to drop it.");
-                    System.out.println("The item will remain where you dropped it, so don't worry, you will");
-                    System.out.println("be able to take it back at any moment.");
+                    game.print("Type 'drop <item' to drop the item on the ground.");
+                    game.print("you must have the item in your inventory in order to drop it.");
+                    game.print("The item will remain where you dropped it, so don't worry, you will");
+                    game.print("be able to take it back at any moment.");
                     break;
                 case "use":
-                    System.out.println("Type 'use <item>' or 'use <item> on <creature>' to produce the effect.");
-                    System.out.println("Be carefull to not hurt anyone hahahaha.");
-                    System.out.println("Note that some combinations may not produce any effect.");
+                    game.print("Type 'use <item>' or 'use <item> on <creature>' to produce the effect.");
+                    game.print("Be carefull to not hurt anyone hahahaha.");
+                    game.print("Note that some combinations may not produce any effect.");
                     break;
                 case "give":
-                    System.out.println("Type 'give <item> to <creature>' to give an item to someone.");
-                    System.out.println("Note that some combinations may not produce any effect.");
+                    game.print("Type 'give <item> to <creature>' to give an item to someone.");
+                    game.print("Note that some combinations may not produce any effect.");
                     break;
                 case "talk":
-                    System.out.println("Type 'talk to <creature>' in order to start a conversation.");
-                    System.out.println("Note that there is no 'reply' command, just talk again to reply.");
+                    game.print("Type 'talk to <creature>' in order to start a conversation.");
+                    game.print("Note that there is no 'reply' command, just talk again to reply.");
                     break;
                 case "examine":
-                    System.out.println("Type 'examine <item>' in order to look carefully.");
-                    System.out.println("Since this is the Alpha of the game, creatures cannot be examined");
+                    game.print("Type 'examine <item>' in order to look carefully.");
+                    game.print("Since this is the Alpha of the game, creatures cannot be examined");
                     break;
                 default:
-                    System.out.println("There are no additional informations about this command");
+                    game.print("There are no additional informations about this command");
                     break;
 
             }
@@ -155,7 +163,7 @@ public class Helper{
      * Prints the wrong syntax error message.
      */
     public void printWrongSyntax(String command){
-        System.out.println("Wrong syntax for the " + command + " command.\n" +
+        game.print("Wrong syntax for the " + command + " command.\n" +
                 "Use 'help <command> for additional help.\n");
     }
 }

@@ -1,4 +1,7 @@
-package com.company;
+package com.company.commands;
+
+import com.company.Game;
+
 /**
  * This class is part of the Divina Commedia simulator application.
  *
@@ -17,12 +20,13 @@ package com.company;
  * @version 2016.02.29
  */
 
-public class Command
+public abstract class Command
 {
-    private String commandWord;
-    private String secondWord;
-    private String thirdWord;
-    private String fourthWord;
+    protected String commandWord;
+    protected String secondWord;
+    protected String thirdWord;
+    protected String fourthWord;
+    protected Game game;
 
     /**
      * Create a command object. First and second word must be supplied, but
@@ -33,13 +37,46 @@ public class Command
      * @param thirdWord The third word of the command.
      * @param fourthWord The fourth word of the command.
      */
+    public Command(String firstWord, String secondWord, String thirdWord, String fourthWord, Game game){
+        commandWord = firstWord;
+        this.secondWord = secondWord;
+        this.thirdWord = thirdWord;
+        this.fourthWord = fourthWord;
+        this.game = game;
+    }
+
+    public Command(String firstWord, String secondWord, String thirdWord, Game game){
+        commandWord = firstWord;
+        this.secondWord = secondWord;
+        this.thirdWord = thirdWord;
+        this.game = game;
+    }
+
+    public Command(String firstWord, String secondWord, Game game){
+        commandWord = firstWord;
+        this.secondWord = secondWord;
+        this.game = game;
+    }
+
+    public Command(Game game){
+        this.game = game;
+    }
+
+    /**
+     * TODO OOOLD
+     * @param firstWord
+     * @param secondWord
+     * @param thirdWord
+     * @param fourthWord
+     */
     public Command(String firstWord, String secondWord, String thirdWord, String fourthWord){
         commandWord = firstWord;
         this.secondWord = secondWord;
         this.thirdWord = thirdWord;
         this.fourthWord = fourthWord;
-
     }
+
+
 
     /**
      * Return the command word (the first word) of this command. If the
@@ -48,11 +85,13 @@ public class Command
      */
     public String getCommandWord()
     {
-        if (commandWord == null){
+       /* if (commandWord == null){
             return "";
-        }
+        }*/
         return commandWord;
     }
+
+    public abstract boolean mustBeSaved();
 
     /**
      * @return The second word of this command. Returns null if there was no
@@ -85,6 +124,13 @@ public class Command
     public boolean isUnknown()
     {
         return (commandWord == null);
+    }
+
+    public abstract boolean execute();
+
+    @Override
+    public String toString(){
+        return commandWord + " " + secondWord;
     }
 }
 

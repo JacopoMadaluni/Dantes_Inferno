@@ -1,8 +1,23 @@
 package com.company;
+import com.company.commands.Command;
+
+import java.awt.*;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Iterator;
 import java.lang.Math;
+import com.company.Gui.*;
+import com.sun.xml.internal.bind.v2.TODO;
+import javafx.concurrent.Worker;
+import javafx.scene.control.TextArea;
+
+import javax.swing.plaf.nimbus.State;
+
 /**
  *  This class is the main class of the Divina Commedia simulator application.
  *  The game is inspired to a famus Italian poem by Dante Alighieri: Divinia Commedia.
@@ -21,8 +36,10 @@ import java.lang.Math;
 
 public class Game
 {
+    private Controller controller;
     private Helper helper;
     private Parser parser;
+    private Saver saver;
     private Room currentRoom;
     private Room previousRoom;
     private Player player;
@@ -31,10 +48,10 @@ public class Game
     private HashSet<Item> items;
     private HashSet<Room> rooms;
     private HashSet<Room> infernalRooms;
-    private CommandManager commandManager;
     private EventManager eventManager;
     private Virgilius virgil;
     private boolean finished;
+    private static boolean printActivated;
     private static int textSpeed;
     private Bucket bucket;
 
@@ -46,19 +63,25 @@ public class Game
     {
         this.finished = false;
         this.textSpeed = 25;
-        helper = new Helper();
+        this.printActivated = true;
+        helper = Helper.getHelper(this);
+        saver = new Saver();
         creatures = new HashSet<>();
         movingCreatures = new HashSet<>();
         items = new HashSet<>();
         rooms = new HashSet<>();
         infernalRooms = new HashSet<>();
-        parser = new Parser();
+        parser = new Parser(this);
         player = new Player();
-        commandManager = new CommandManager(this);
         eventManager = new EventManager(this);
         initializeGame();
         previousRoom = currentRoom;
     }
+
+    public void setController(Controller controller){
+        this.controller = controller;
+    }
+
 
     /**
      * Set the delay of the dynamic printing.
@@ -78,6 +101,9 @@ public class Game
             System.out.println("Invalid speed");
         }
     }
+    public void setTextSpeed(int i){
+        textSpeed = i;
+    }
 
     private boolean isNumeric(String string){
         return string != null && string.matches("[-+]?\\d*\\.?\\d+");
@@ -92,12 +118,6 @@ public class Game
         return player.hasVirgil();
     }
 
-    /**
-     * @return the bucket which is a special item.
-     */
-    //public Bucket getBucket(){
-    //    return bucket;
-    //  }
 
     /**
      * Given the name of the creature returns the creature.
@@ -120,6 +140,8 @@ public class Game
     public Room getCurrentRoom(){
         return currentRoom;
     }
+
+    public int getTextSpeed(){ return textSpeed;}
 
     /**
      * Given the name of the room, returns the room.
@@ -163,15 +185,35 @@ public class Game
 
     /** Core methods */
 
+    public void load(String savePoint){
+        printActivated = false;
+        System.out.println("Loading");
+        List<Command> toLoad = parser.loadSave(savePoint);
+        for (Command c : toLoad){
+            c.execute();
+        }
+        System.out.println("Load successful");
+        printActivated = true;
+
+    }
+
+    public void parseCommand(String inputLine){
+        Command command = parser.parseCommand(inputLine);
+        this.finished = command.execute();
+    }
     /**
      *  Main play routine. Loops until end of play.
      */
-    public void play()
+    public void play(boolean beginning)
     {
-        printStart();
+        if (beginning) {
+            saver.clearSavings();
+            printStart();
+        }
         while (! this.finished) {
             Command command = parser.getCommand();
-            this.finished = processCommand(command);
+            this.finished = command.execute();
+            //this.finished = processCommand(command);
             moveCreatures();
             if (finished){
                 break;
@@ -180,31 +222,19 @@ public class Game
         print("Thank you for playing.  Good bye.");
     }
 
-    /**
-     * Given a command, if the command is known, calls the CommandManager to process it.
-     * Return true if the player quits or the end of the game is reached.
-     */
-    private boolean processCommand(Command command)
-    {
-        boolean wantToQuit = false;
+    public void save(){
+        String history = parser.getCommandsHistory();
+        if (saver.save(history)){
+            print("--- Game Saved ---");
+            parser.clearHistory();
+        }else{
+            print("Error, could not save the game, try again.");
 
-        if(command.isUnknown() && command.getCommandWord() != null) {
-            print("I don't know what you mean...\n");
-            return false;
         }
 
-        String commandWord = command.getCommandWord();
-        String secondWord = command.getSecondWord();
-        String thirdWord = command.getThirdWord();
-        String fourthWord = command.getFourthWord();
-
-        wantToQuit = commandManager.process(commandWord, secondWord, thirdWord, fourthWord);
-
-        return wantToQuit;
     }
 
     /** implementations of user commands */
-    /** All the user commands are called by the CommandManager when it's the case */
 
     /**
      * Prints the description of everithing around the player.
@@ -377,8 +407,8 @@ public class Game
     public void talkTo(String creatureName){
         Creature creature = currentRoom.getCreature(creatureName);
         if (creature == null){
-            print("There is no " + creatureName + " here.\n");
-            print(helper.helpUser(currentRoom.getName(), creatureName));
+            print("There is no " + creatureName + " here.\n" +
+                    helper.helpUser(currentRoom.getName(), creatureName));
         }else if (creature.getName().equals("virgil")){
             print(virgil.getDialogue(currentRoom.getName()));
             virgil.increaseDialogueIndex();
@@ -618,8 +648,7 @@ public class Game
         print("Lucifer disarms you and kills you.\n");
         wait(2000);
         print("You lost.\n");
-        commandManager.setWantToFinish(true);
-        finished = commandManager.process("quit", "","","");
+        // TODO add lose screen or event
     }
 
     /**
@@ -631,8 +660,7 @@ public class Game
             currentRoom = getRoom("ending");
         }else{
             printLose();
-            commandManager.setWantToFinish(true);
-            finished = commandManager.process("quit", "","","");
+            // TODO Add lose event
         }
     }
 
@@ -693,18 +721,17 @@ public class Game
     /**
      * Gets printed at the very start of the game.
      */
-    private void printStart(){
+    public void printStart(){
         print("\nIn the middle of the journey of your life\n" +
-                "You came to yourself in a dark wood\nWhere the direct way was lost..\n\n");
-        print("Welcome to this adventure game developed by Jacopo Madaluni, the setting is inspired by\n" +
-                "a poem called: Divina Commedia. Your character name is 'Dante'.\n");
-        print("He woke up in this strange place, you have to help him escape.\n");
-        print("I suggest you to start looking around.\n");
+                "You came to yourself in a dark wood\nWhere the direct way was lost..\n\n" +
+                "Welcome to this adventure game developed by Jacopo Madaluni, the setting is inspired by\n" +
+                "a poem called: Divina Commedia. Your character name is 'Dante'.\n" +
+                "He woke up in this strange place, you have to help him escape.\n" +
+                "I suggest you to start looking around.\n" +
+                "Type textSpeed <value> to set the speed of the dynamic printing.\n" +
+                "If you are marking the assignment I would suggest to set 'textSpeed 0' to save time.\n" +
+                "Type 'help' for instructions.\n");
 
-        print("Type textSpeed <value> to set the speed of the dynamic printing.\n");
-        print("If you are marking the assignment I would suggest to set 'textSpeed 0' to save time.\n");
-
-        print("Type 'help' for instructions.\n");
     }
 
     private void printWin(){
@@ -1131,11 +1158,18 @@ public class Game
         }
     }
 
+    public void print(String s){
+        print2(s);
+    } // change to switch mode between 1 and 2
+
     /**
      * Prints the string character by character with a delay of 25 ms.
      * @param s The string to be printed dynamically.
      */
-    public static void print(String s){
+    public void print1(String s){
+        if (!printActivated){
+            return;
+        }
         if (textSpeed != 0 ){
             char[] charArray = s.toCharArray();
             for (char c : charArray){
@@ -1151,5 +1185,19 @@ public class Game
             System.out.print(s);
         }
     }
+
+    public void  print2(String s){
+        if (controller.isPrinting()){
+            return;
+        }
+        if (textSpeed == 0){
+            controller.appendText(s + "\n");
+        }else {
+           // controller.dynamicPrint(s + "\n");
+            controller.test(s);
+        }
+    }
 }
+
+
 
